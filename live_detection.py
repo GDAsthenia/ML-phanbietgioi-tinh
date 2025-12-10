@@ -5,7 +5,7 @@ import tensorflow as tf
 # --- Configuration ---
 MODEL_PATH = 'gender_detector_cnn.h5'
 IMAGE_SIZE = (150, 150)
-# Adjust these labels based on your train_model.py output (usually 0=female, 1=male)
+# Adjust these labels based on your train_model.py output
 CLASS_LABELS = {0: 'Female', 1: 'Male'} 
 
 # --- Setup ---
