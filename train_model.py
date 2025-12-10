@@ -8,8 +8,8 @@ import os
 # Your folder is named 'main', so we update this:
 DATA_DIR = 'main' 
 IMAGE_SIZE = (150, 150)
-BATCH_SIZE = 32 #number of image it will take for each literation (batch_size bigger -> faster training)
-EPOCHS = 10 #number of iterations
+BATCH_SIZE = 200 #number of image it will take for each literation (batch_size bigger -> faster training)
+EPOCHS = 40 #number of iterations
 MODEL_SAVE_PATH = 'gender_detector_cnn.h5'
 
 ## --- Step 1: Data Preparation ---
