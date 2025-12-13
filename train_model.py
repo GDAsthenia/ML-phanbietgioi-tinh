@@ -2,14 +2,17 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from tensorflow.keras import Input
+from tensorflow.keras.layers import BatchNormalization, Dropout
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import os
 
 # --- Configuration ---
 # Your folder is named 'main', so we update this:
 DATA_DIR = 'main' 
 IMAGE_SIZE = (150, 150)
-BATCH_SIZE = 200 #number of image it will take for each literation (batch_size bigger -> faster training)
-EPOCHS = 40 #number of iterations
+BATCH_SIZE = 32 #number of image it will take for each literation (batch_size bigger -> faster training)
+EPOCHS = 10#number of iterations
 MODEL_SAVE_PATH = 'gender_detector_cnn.h5'
 
 ## --- Step 1: Data Preparation ---
@@ -57,14 +60,21 @@ print(f"Detected Classes: {class_labels}")
 ## --- Step 2: Build the CNN Model ---
 print("Building the CNN model...")
 model = Sequential([
-    Conv2D(32, (3, 3), activation='relu', input_shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3)),
-    MaxPooling2D((2, 2)),
-    
-    Conv2D(64, (3, 3), activation='relu'),
-    MaxPooling2D((2, 2)),
-    
+    Input(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3)),
+    Conv2D(32, (3,3), activation='relu', padding='same'),
+    BatchNormalization(),
+    MaxPooling2D((2,2)),
+    Dropout(0.25),
+
+    Conv2D(64, (3,3), activation='relu', padding='same'),
+    BatchNormalization(),
+    MaxPooling2D((2,2)),
+    Dropout(0.25),
+
     Flatten(),
     Dense(128, activation='relu'),
+    BatchNormalization(),
+    Dropout(0.5),
     Dense(1, activation='sigmoid')
 ])
 
@@ -74,12 +84,17 @@ model.compile(optimizer='adam',
 
 ## --- Step 3: Train the Model ---
 print("Starting model training...")
+callbacks = [
+    EarlyStopping(patience=6, restore_best_weights=True),
+    ModelCheckpoint('best_model.keras', save_best_only=True),
+    ReduceLROnPlateau(factor=0.5, patience=3)
+]
+
 history = model.fit(
     train_generator,
-    steps_per_epoch=train_generator.samples // BATCH_SIZE,
     epochs=EPOCHS,
     validation_data=validation_generator,
-    validation_steps=validation_generator.samples // BATCH_SIZE
+    callbacks=callbacks
 )
 
 ## --- Step 4: Save the Model ---
