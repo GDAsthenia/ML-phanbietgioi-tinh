@@ -1,11 +1,11 @@
 import tensorflow as tf
-# We use 'utils' to load images, it is more reliable in newer versions
+#We use 'utils' to load images, it is more reliable in newer versions
 from tensorflow.keras.utils import load_img, img_to_array
 import numpy as np
 import os
 import sys
 
-# --- Configuration ---
+#Configuration
 MODEL_PATH = 'gender_detector_cnn.h5'
 IMAGE_SIZE = (150, 150)
 CLASS_LABELS = {0: 'Female', 1: 'Male'} 
