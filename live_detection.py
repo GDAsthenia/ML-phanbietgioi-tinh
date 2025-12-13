@@ -42,8 +42,9 @@ while True:
         
         # Pre-process the face for the CNN
         processed_face = cv2.resize(face_roi, IMAGE_SIZE)
-        processed_face = np.expand_dims(processed_face, axis=0) # Add batch dimension
-        processed_face = processed_face / 255.0 # Normalize (just like training)
+        processed_face = cv2.cvtColor(processed_face, cv2.COLOR_BGR2RGB)
+        processed_face = processed_face.astype('float32') / 255.0
+        processed_face = np.expand_dims(processed_face, axis=0)
         
         # Make the prediction
         prediction = model.predict(processed_face)[0][0]
